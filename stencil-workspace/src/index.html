@@ -21,5 +21,47 @@
   </head>
   <body>
 
+    <modus-tree-view>
+      <modus-tree-view-item label="Node root">
+        <modus-tree-view-item label="Node one">
+        </modus-tree-view-item>
+        <modus-tree-view-item label="Node two">
+        </modus-tree-view-item>
+        <modus-tree-view-item label="Node three">
+        </modus-tree-view-item>
+      </modus-tree-view-item>
+    </modus-tree-view>
+
+    <modus-tree-view-pro></modus-tree-view-pro>
+    <script>
+      const modusTreeViewPro = document.querySelector("modus-tree-view-pro");
+      modusTreeViewPro.items = [
+        {
+          nodeId: 1,
+          label: "Node 1",
+          children: [{
+              nodeId: 4,
+              label: "Child Node 1",
+            },
+            {
+              nodeId: 5,
+              label: "Child Node 2",
+            },
+            {
+              nodeId: 6,
+              label: "Child Node 3",
+            },
+        ]
+        },
+        {
+          nodeId: 2,
+          label: "Node 2",
+        },
+        {
+          nodeId: 3,
+          label: "Node 3",
+        },
+      ];
+    </script>
   </body>
 </html>

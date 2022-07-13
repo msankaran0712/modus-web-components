@@ -10,6 +10,7 @@ import { App } from "./components/modus-navbar/apps-menu/modus-navbar-apps-menu"
 import { App as App1 } from "./components/modus-navbar/apps-menu/modus-navbar-apps-menu";
 import { RadioButton } from "./components/modus-radio-group/modus-radio-button";
 import { Tab } from "./components/modus-tabs/modus-tabs";
+import { TreeItem } from "./components/modus-tree-view-pro/types";
 export namespace Components {
     interface ModusAccordion {
         /**
@@ -747,6 +748,46 @@ export namespace Components {
          */
         "text": string;
     }
+    interface ModusTreeView {
+    }
+    interface ModusTreeViewItem {
+        /**
+          * (optional) Disables the tree item
+         */
+        "disabled": boolean;
+        /**
+          * (required) Label for the tree item
+         */
+        "label": string;
+        /**
+          * (optional) The selected state of the tree item
+         */
+        "selected": boolean;
+        /**
+          * (optional) The size of tree item
+         */
+        "size": 'condensed' | 'large' | 'standard';
+        /**
+          * (optional) The type of tree item
+         */
+        "type": 'standard';
+    }
+    interface ModusTreeViewPro {
+        /**
+          * (optional) Disables the tree item
+         */
+        "disabled": boolean;
+        /**
+          * (required) Label for the tree item
+         */
+        "items": TreeItem[];
+        /**
+          * (optional) The size of tree item
+         */
+        "size": 'condensed' | 'large' | 'standard';
+    }
+    interface TestComponent {
+    }
 }
 export interface ModusAccordionItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -835,6 +876,10 @@ export interface ModusTextInputCustomEvent<T> extends CustomEvent<T> {
 export interface ModusToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLModusToastElement;
+}
+export interface ModusTreeViewItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLModusTreeViewItemElement;
 }
 declare global {
     interface HTMLModusAccordionElement extends Components.ModusAccordion, HTMLStencilElement {
@@ -1035,6 +1080,30 @@ declare global {
         prototype: HTMLModusTooltipElement;
         new (): HTMLModusTooltipElement;
     };
+    interface HTMLModusTreeViewElement extends Components.ModusTreeView, HTMLStencilElement {
+    }
+    var HTMLModusTreeViewElement: {
+        prototype: HTMLModusTreeViewElement;
+        new (): HTMLModusTreeViewElement;
+    };
+    interface HTMLModusTreeViewItemElement extends Components.ModusTreeViewItem, HTMLStencilElement {
+    }
+    var HTMLModusTreeViewItemElement: {
+        prototype: HTMLModusTreeViewItemElement;
+        new (): HTMLModusTreeViewItemElement;
+    };
+    interface HTMLModusTreeViewProElement extends Components.ModusTreeViewPro, HTMLStencilElement {
+    }
+    var HTMLModusTreeViewProElement: {
+        prototype: HTMLModusTreeViewProElement;
+        new (): HTMLModusTreeViewProElement;
+    };
+    interface HTMLTestComponentElement extends Components.TestComponent, HTMLStencilElement {
+    }
+    var HTMLTestComponentElement: {
+        prototype: HTMLTestComponentElement;
+        new (): HTMLTestComponentElement;
+    };
     interface HTMLElementTagNameMap {
         "modus-accordion": HTMLModusAccordionElement;
         "modus-accordion-item": HTMLModusAccordionItemElement;
@@ -1069,6 +1138,10 @@ declare global {
         "modus-text-input": HTMLModusTextInputElement;
         "modus-toast": HTMLModusToastElement;
         "modus-tooltip": HTMLModusTooltipElement;
+        "modus-tree-view": HTMLModusTreeViewElement;
+        "modus-tree-view-item": HTMLModusTreeViewItemElement;
+        "modus-tree-view-pro": HTMLModusTreeViewProElement;
+        "test-component": HTMLTestComponentElement;
     }
 }
 declare namespace LocalJSX {
@@ -1910,6 +1983,50 @@ declare namespace LocalJSX {
          */
         "text"?: string;
     }
+    interface ModusTreeView {
+    }
+    interface ModusTreeViewItem {
+        /**
+          * (optional) Disables the tree item
+         */
+        "disabled"?: boolean;
+        /**
+          * (required) Label for the tree item
+         */
+        "label": string;
+        /**
+          * An event that fires on list item click
+         */
+        "onItemClick"?: (event: ModusTreeViewItemCustomEvent<any>) => void;
+        /**
+          * (optional) The selected state of the tree item
+         */
+        "selected"?: boolean;
+        /**
+          * (optional) The size of tree item
+         */
+        "size"?: 'condensed' | 'large' | 'standard';
+        /**
+          * (optional) The type of tree item
+         */
+        "type"?: 'standard';
+    }
+    interface ModusTreeViewPro {
+        /**
+          * (optional) Disables the tree item
+         */
+        "disabled"?: boolean;
+        /**
+          * (required) Label for the tree item
+         */
+        "items": TreeItem[];
+        /**
+          * (optional) The size of tree item
+         */
+        "size"?: 'condensed' | 'large' | 'standard';
+    }
+    interface TestComponent {
+    }
     interface IntrinsicElements {
         "modus-accordion": ModusAccordion;
         "modus-accordion-item": ModusAccordionItem;
@@ -1944,6 +2061,10 @@ declare namespace LocalJSX {
         "modus-text-input": ModusTextInput;
         "modus-toast": ModusToast;
         "modus-tooltip": ModusTooltip;
+        "modus-tree-view": ModusTreeView;
+        "modus-tree-view-item": ModusTreeViewItem;
+        "modus-tree-view-pro": ModusTreeViewPro;
+        "test-component": TestComponent;
     }
 }
 export { LocalJSX as JSX };
@@ -1983,6 +2104,10 @@ declare module "@stencil/core" {
             "modus-text-input": LocalJSX.ModusTextInput & JSXBase.HTMLAttributes<HTMLModusTextInputElement>;
             "modus-toast": LocalJSX.ModusToast & JSXBase.HTMLAttributes<HTMLModusToastElement>;
             "modus-tooltip": LocalJSX.ModusTooltip & JSXBase.HTMLAttributes<HTMLModusTooltipElement>;
+            "modus-tree-view": LocalJSX.ModusTreeView & JSXBase.HTMLAttributes<HTMLModusTreeViewElement>;
+            "modus-tree-view-item": LocalJSX.ModusTreeViewItem & JSXBase.HTMLAttributes<HTMLModusTreeViewItemElement>;
+            "modus-tree-view-pro": LocalJSX.ModusTreeViewPro & JSXBase.HTMLAttributes<HTMLModusTreeViewProElement>;
+            "test-component": LocalJSX.TestComponent & JSXBase.HTMLAttributes<HTMLTestComponentElement>;
         }
     }
 }
