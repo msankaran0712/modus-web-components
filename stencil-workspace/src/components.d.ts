@@ -756,6 +756,10 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * (optional) The expanded state of the tree item
+         */
+        "expanded": boolean;
+        /**
           * (required) Label for the tree item
          */
         "label": string;
@@ -785,8 +789,6 @@ export namespace Components {
           * (optional) The size of tree item
          */
         "size": 'condensed' | 'large' | 'standard';
-    }
-    interface TestComponent {
     }
 }
 export interface ModusAccordionItemCustomEvent<T> extends CustomEvent<T> {
@@ -1098,12 +1100,6 @@ declare global {
         prototype: HTMLModusTreeViewProElement;
         new (): HTMLModusTreeViewProElement;
     };
-    interface HTMLTestComponentElement extends Components.TestComponent, HTMLStencilElement {
-    }
-    var HTMLTestComponentElement: {
-        prototype: HTMLTestComponentElement;
-        new (): HTMLTestComponentElement;
-    };
     interface HTMLElementTagNameMap {
         "modus-accordion": HTMLModusAccordionElement;
         "modus-accordion-item": HTMLModusAccordionItemElement;
@@ -1141,7 +1137,6 @@ declare global {
         "modus-tree-view": HTMLModusTreeViewElement;
         "modus-tree-view-item": HTMLModusTreeViewItemElement;
         "modus-tree-view-pro": HTMLModusTreeViewProElement;
-        "test-component": HTMLTestComponentElement;
     }
 }
 declare namespace LocalJSX {
@@ -1991,9 +1986,14 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * (optional) The expanded state of the tree item
+         */
+        "expanded"?: boolean;
+        /**
           * (required) Label for the tree item
          */
         "label": string;
+        "onAddedTreeViewItem"?: (event: ModusTreeViewItemCustomEvent<(level: number, fromNode: string) => void>) => void;
         /**
           * An event that fires on list item click
          */
@@ -2024,8 +2024,6 @@ declare namespace LocalJSX {
           * (optional) The size of tree item
          */
         "size"?: 'condensed' | 'large' | 'standard';
-    }
-    interface TestComponent {
     }
     interface IntrinsicElements {
         "modus-accordion": ModusAccordion;
@@ -2064,7 +2062,6 @@ declare namespace LocalJSX {
         "modus-tree-view": ModusTreeView;
         "modus-tree-view-item": ModusTreeViewItem;
         "modus-tree-view-pro": ModusTreeViewPro;
-        "test-component": TestComponent;
     }
 }
 export { LocalJSX as JSX };
@@ -2107,7 +2104,6 @@ declare module "@stencil/core" {
             "modus-tree-view": LocalJSX.ModusTreeView & JSXBase.HTMLAttributes<HTMLModusTreeViewElement>;
             "modus-tree-view-item": LocalJSX.ModusTreeViewItem & JSXBase.HTMLAttributes<HTMLModusTreeViewItemElement>;
             "modus-tree-view-pro": LocalJSX.ModusTreeViewPro & JSXBase.HTMLAttributes<HTMLModusTreeViewProElement>;
-            "test-component": LocalJSX.TestComponent & JSXBase.HTMLAttributes<HTMLTestComponentElement>;
         }
     }
 }
