@@ -38,7 +38,8 @@
     "ci-storybook": "cd storybook && npm ci && npm run build-storybook"
   },
   "dependencies": {
-    "@stencil/core": "^2.17.1"
+    "@stencil/core": "^2.17.1",
+    "@stencil/state-tunnel": "^1.0.1"
   },
   "devDependencies": {
     "@stencil/angular-output-target": "^0.4.0",

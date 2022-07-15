@@ -1,6 +1,14 @@
-import { Component, Event, EventEmitter, Prop, State, h, Element, Listen } from '@stencil/core';
+import { Component, Event, EventEmitter, Prop, State, h, Element, Method } from '@stencil/core';
 import { IconChevronDownThick } from '../icons/icon-chevron-down-thick';
 import { IconChevronRightThick } from '../icons/icon-chevron-right-thick';
+
+type TreeViewRootSettings = {
+  multiSelection?: boolean;
+  checkboxSelection?: boolean;
+  expandIcon?: HTMLElement;
+  collapseIcon?: HTMLElement;
+  size?: string;
+};
 
 @Component({
   tag: 'modus-tree-view-item',
@@ -28,41 +36,49 @@ export class ModusTreeViewItem {
   /** (optional) The type of tree item */
   @Prop() type: 'standard' = 'standard'; // Future support for 'checkbox' | 'icon' | 'menu' | 'standard' | 'switchLeft' | 'switchRight'
 
+  @Method()
+  async setLevel(level: number): Promise<void> {
+    this.level = level;
+  }
+
   /** An event that fires on list item click */
   @Event() itemClick: EventEmitter;
 
   @State() expandable: boolean;
 
+  @State() rootSettings: TreeViewRootSettings;
+
   @State() level = 1;
 
   @Event({
-    eventName: 'addedTreeViewItem',
+    eventName: 'treeViewItemAdded',
     composed: true,
     cancelable: true,
     bubbles: true,
   })
-  addedTreeViewItem: EventEmitter<(level: number, fromNode: string) => void>;
+  onTreeViewItemAdded: EventEmitter<{ setRootSettings: (map: Map<string, unknown>) => void }>;
 
-  @Listen('addedTreeViewItem')
-  treeViewItemAddedHandler(e: CustomEvent): void {
-    e.cancelBubble = true;
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.detail) e.detail(this.level + 1, this.label);
+  setRootSettings(map: Map<string, unknown>): void {
+    this.rootSettings = {
+      multiSelection: map.get('multiSelection') as boolean | undefined,
+      checkboxSelection: map.get('checkboxSelection') as boolean | undefined,
+      expandIcon: map.get('expandIcon') as HTMLElement | undefined,
+      collapseIcon: map.get('collapseIcon') as HTMLElement | undefined,
+      size: map.get('size') as string | undefined,
+    };
   }
 
-  private classBySize: Map<string, string> = new Map([
-    ['condensed', 'small'],
-    ['standard', 'standard'],
-    ['large', 'large'],
-  ]);
+  componentWillRender() {
+    // update level for each child to set indentation
+    if (this.element.children && this.element.children.length) {
+      this.expandable = true;
+      Array.from(this.element.children).forEach((child) => {
+        (child as HTMLModusTreeViewItemElement).setLevel(this.level + 1);
+      });
+    }
 
-  connectedCallback() {
-    this.addedTreeViewItem.emit((level: number, fromNode: string) => {
-      console.log(`${this.label} is set by ${fromNode}`);
-      this.level = level;
-    });
+    // get settings from root parent
+    this.onTreeViewItemAdded.emit({ setRootSettings: this.setRootSettings });
   }
 
   onItemToggle(): void {
@@ -80,6 +96,11 @@ export class ModusTreeViewItem {
     if (this.itemClick) this.itemClick.emit();
   }
 
+  private classBySize: Map<string, string> = new Map([
+    ['condensed', 'small'],
+    ['standard', 'standard'],
+    ['large', 'large'],
+  ]);
   render(): HTMLLIElement {
     const sizeClass = `${this.classBySize.get(this.size)}`;
     const treeItemClass = `tree-item ${this.selected ? 'selected' : ''} ${sizeClass} ${this.disabled ? 'disabled' : ''} `;
@@ -98,7 +119,7 @@ export class ModusTreeViewItem {
           </div>
         </div>
         <ul class={treeItemChildrenClass}>
-          <slot onSlotchange={() => (this.expandable = true)} />
+          <slot />
         </ul>
       </li>
     );

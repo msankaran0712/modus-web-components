@@ -749,6 +749,20 @@ export namespace Components {
         "text": string;
     }
     interface ModusTreeView {
+        /**
+          * (optional) Enables multiple tree item selection
+         */
+        "checkboxSelection": boolean;
+        "collapseIcon": HTMLElement;
+        "expandIcon": HTMLElement;
+        /**
+          * (optional) Enables multiple tree item selection
+         */
+        "multiSelection": boolean;
+        /**
+          * (optional) The size of tree item
+         */
+        "size": 'condensed' | 'large' | 'standard';
     }
     interface ModusTreeViewItem {
         /**
@@ -767,6 +781,7 @@ export namespace Components {
           * (optional) The selected state of the tree item
          */
         "selected": boolean;
+        "setLevel": (level: number) => Promise<void>;
         /**
           * (optional) The size of tree item
          */
@@ -1979,6 +1994,20 @@ declare namespace LocalJSX {
         "text"?: string;
     }
     interface ModusTreeView {
+        /**
+          * (optional) Enables multiple tree item selection
+         */
+        "checkboxSelection"?: boolean;
+        "collapseIcon"?: HTMLElement;
+        "expandIcon"?: HTMLElement;
+        /**
+          * (optional) Enables multiple tree item selection
+         */
+        "multiSelection"?: boolean;
+        /**
+          * (optional) The size of tree item
+         */
+        "size"?: 'condensed' | 'large' | 'standard';
     }
     interface ModusTreeViewItem {
         /**
@@ -1993,11 +2022,11 @@ declare namespace LocalJSX {
           * (required) Label for the tree item
          */
         "label": string;
-        "onAddedTreeViewItem"?: (event: ModusTreeViewItemCustomEvent<(level: number, fromNode: string) => void>) => void;
         /**
           * An event that fires on list item click
          */
         "onItemClick"?: (event: ModusTreeViewItemCustomEvent<any>) => void;
+        "onTreeViewItemAdded"?: (event: ModusTreeViewItemCustomEvent<{ setRootSettings: (map: Map<string, unknown>) => void }>) => void;
         /**
           * (optional) The selected state of the tree item
          */

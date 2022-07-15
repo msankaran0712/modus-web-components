@@ -26,7 +26,7 @@ export class ModusTreeViewPro {
   ]);
 
   private handleExpandCollapse(id): void {
-    if (this.treeState && this.treeState.expanded) {
+    if (this.treeState) {
       const prevState = { ...this.treeState };
       const prevExpanded = prevState.expanded ? [...prevState.expanded] : [];
       if (prevExpanded.includes(id)) {
