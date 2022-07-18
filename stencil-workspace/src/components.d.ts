@@ -898,10 +898,6 @@ export interface ModusToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLModusToastElement;
 }
-export interface ModusTreeViewItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLModusTreeViewItemElement;
-}
 declare global {
     interface HTMLModusAccordionElement extends Components.ModusAccordion, HTMLStencilElement {
     }
@@ -2030,7 +2026,6 @@ declare namespace LocalJSX {
           * (required) unique tree item id
          */
         "nodeId": number;
-        "onItemAdded"?: (event: ModusTreeViewItemCustomEvent<{ setRootSettings: (map: Map<string, unknown>) => void }>) => void;
         /**
           * (optional) The selected state of the tree item
          */

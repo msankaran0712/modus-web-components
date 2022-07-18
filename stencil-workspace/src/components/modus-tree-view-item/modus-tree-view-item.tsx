@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter, Prop, State, h, Element, Method } from '@stencil/core';
+import { Component, Prop, State, h, Element, Method, Host } from '@stencil/core';
 import { IconChevronDownThick } from '../icons/icon-chevron-down-thick';
 import { IconChevronRightThick } from '../icons/icon-chevron-right-thick';
 import TreeViewItemTunnel from '../../state-tunnel/TreeViewItem';
@@ -51,68 +51,36 @@ export class ModusTreeViewItem {
 
   @State() level = 1;
 
-  @Event({
-    eventName: 'itemAdded',
-    composed: true,
-    cancelable: true,
-    bubbles: true,
-  })
-  onItemAdded: EventEmitter<{ setRootSettings: (map: Map<string, unknown>) => void }>;
-
-  // @Event({
-  //   eventName: 'toggleItemSelection',
-  //   composed: true,
-  //   cancelable: true,
-  //   bubbles: true,
-  // })
-  // onToggleItemSelection: EventEmitter<{ nodeId: number, target: HTMLLIElement}>;
-
-  // @Event({
-  //   eventName: 'toggleCheckboxSelection',
-  //   composed: true,
-  //   cancelable: true,
-  //   bubbles: true,
-  // })
-  // onToggleCheckboxSelection: EventEmitter<{ nodeId: number, target: HTMLLIElement}>;
-
-  setRootSettings(map: Map<string, unknown>): void {
-    this.rootSettings = {
-      multiSelection: map.get('multiSelection') as boolean | undefined,
-      checkboxSelection: map.get('checkboxSelection') as boolean | undefined,
-      expandIcon: map.get('expandIcon') as HTMLElement | undefined,
-      collapseIcon: map.get('collapseIcon') as HTMLElement | undefined,
-      size: map.get('size') as string | undefined,
-    };
-  }
-
-  onItemToggle(): void {
+  handleItemToggle(): void {
     if (this.disabled) {
       return;
     }
     this.expanded = !this.expanded;
   }
-
-  onItemClick(handler): void {
+  handleItemClick(handler): void {
     if (this.disabled) {
       return;
     }
-
-    // this.selected = !this.selected;
     if (handler) handler(this.nodeId, this.element);
     // if (this.itemClick) this.itemClick.emit();
   }
 
-  componentWillLoad() {
-    // update level for each child to set indentation
-    if (this.element.children && this.element.children.length) {
-      this.expandable = true;
-      Array.from(this.element.children).forEach((child) => {
-        (child as HTMLModusTreeViewItemElement).setLevel(this.level + 1);
-      });
+  //dirty check for updating level on children
+  private hasSlotChanged = true;
+  handleSlotChange(): void {
+    this.hasSlotChanged = true;
+  }
+  componentWillRender() {
+    if (this.hasSlotChanged) {
+      console.log('update slot');
+      if (this.element.childElementCount > 0) {
+        this.expandable = true;
+        Array.from(this.element.children).forEach((child) => {
+          (child as HTMLModusTreeViewItemElement).setLevel(this.level + 1);
+        });
+      } else this.expandable = false;
+      this.hasSlotChanged = false;
     }
-
-    // get settings from root parent
-    this.onItemAdded.emit({ setRootSettings: this.setRootSettings });
   }
 
   private classBySize: Map<string, string> = new Map([
@@ -121,42 +89,39 @@ export class ModusTreeViewItem {
     ['large', 'large'],
   ]);
 
-  // emit selected event to the root and pass nodeid and element reference
-  // let the root use element reference to undo selection on any specific node
-  // tunnel cannot handle the state the way we wanted
-  // add a check in root event handler whether default is prevented or Notification, handle only if default isnt prevented
-
   render(): HTMLLIElement {
     const sizeClass = `${this.classBySize.get(this.size)}`;
     const treeItemClass = `tree-item ${this.selected ? 'selected' : ''} ${sizeClass} ${this.disabled ? 'disabled' : ''} `;
     const treeItemChildrenClass = `tree-item-group ${sizeClass} ${this.expanded ? 'expanded' : ''}`;
 
     return (
-      <TreeViewItemTunnel.Consumer>
-        {({ toggleItemSelection }) => {
-          return (
-            <li class="tree-item-container">
-              <div class={treeItemClass}>
-                <div onClick={() => this.onItemToggle()} class="icon-slot" style={{ paddingLeft: `${(this.level - 1) * 0.5}rem ` }}>
-                  {this.expandable && (this.expanded ? <IconChevronDownThick /> : <IconChevronRightThick />)}
-                </div>
-                <div
-                  role="heading"
-                  onClick={() => {
-                    this.onItemClick(toggleItemSelection);
-                  }}>
-                  <div role="button" class="slot">
-                    {this.label}
+      <Host aria-level={this.level}>
+        <TreeViewItemTunnel.Consumer>
+          {({ toggleItemSelection }) => {
+            return (
+              <li class="tree-item-container">
+                <div class={treeItemClass}>
+                  <div onClick={() => this.handleItemToggle()} class="icon-slot" style={{ paddingLeft: `${(this.level - 1) * 0.5}rem ` }}>
+                    {this.expandable && (this.expanded ? <IconChevronDownThick /> : <IconChevronRightThick />)}
+                  </div>
+                  <div
+                    role="heading"
+                    onClick={() => {
+                      this.handleItemClick(toggleItemSelection);
+                    }}>
+                    <div role="button" class="slot">
+                      {this.label}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <ul class={treeItemChildrenClass}>
-                <slot />
-              </ul>
-            </li>
-          );
-        }}
-      </TreeViewItemTunnel.Consumer>
+                <ul class={treeItemChildrenClass}>
+                  <slot onSlotchange={() => this.handleSlotChange()} />
+                </ul>
+              </li>
+            );
+          }}
+        </TreeViewItemTunnel.Consumer>
+      </Host>
     );
   }
 }

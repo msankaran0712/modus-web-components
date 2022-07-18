@@ -1,4 +1,4 @@
-import { Component, h, Prop, State, Listen } from '@stencil/core';
+import { Component, h, Prop, State } from '@stencil/core';
 import TreeViewItemTunnel from '../../state-tunnel/TreeViewItem';
 
 @Component({
@@ -21,21 +21,6 @@ export class ModusTreeView {
   @Prop() size: 'condensed' | 'large' | 'standard' = 'standard';
 
   @State() selected: Map<number, unknown>;
-
-  @Listen('itemAdded')
-  treeViewItemAddedHandler(e: CustomEvent): void {
-    if (e.detail && e.detail.setRootSettings) {
-      e.detail.setRootSettings(
-        new Map<string, unknown>([
-          ['multiSelection', this.multiSelection],
-          ['checkboxSelection', this.checkboxSelection],
-          ['expandIcon', this.expandIcon],
-          ['collapseIcon', this.collapseIcon],
-          ['size', this.size],
-        ])
-      );
-    }
-  }
 
   toggleItemSelection(itemNodeId: number, element: HTMLModusTreeViewItemElement): void {
     const prevState = new Map(this.selected);
