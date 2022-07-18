@@ -778,6 +778,10 @@ export namespace Components {
          */
         "label": string;
         /**
+          * (required) unique tree item id
+         */
+        "nodeId": number;
+        /**
           * (optional) The selected state of the tree item
          */
         "selected": boolean;
@@ -2023,10 +2027,10 @@ declare namespace LocalJSX {
          */
         "label": string;
         /**
-          * An event that fires on list item click
+          * (required) unique tree item id
          */
-        "onItemClick"?: (event: ModusTreeViewItemCustomEvent<any>) => void;
-        "onTreeViewItemAdded"?: (event: ModusTreeViewItemCustomEvent<{ setRootSettings: (map: Map<string, unknown>) => void }>) => void;
+        "nodeId": number;
+        "onItemAdded"?: (event: ModusTreeViewItemCustomEvent<{ setRootSettings: (map: Map<string, unknown>) => void }>) => void;
         /**
           * (optional) The selected state of the tree item
          */

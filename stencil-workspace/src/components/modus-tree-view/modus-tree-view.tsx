@@ -1,4 +1,5 @@
-import { Component, h, Listen, Prop } from '@stencil/core';
+import { Component, h, Prop, State, Listen } from '@stencil/core';
+import TreeViewItemTunnel from '../../state-tunnel/TreeViewItem';
 
 @Component({
   tag: 'modus-tree-view',
@@ -19,7 +20,9 @@ export class ModusTreeView {
   /** (optional) The size of tree item */
   @Prop() size: 'condensed' | 'large' | 'standard' = 'standard';
 
-  @Listen('treeViewItemAdded')
+  @State() selected: Map<number, unknown>;
+
+  @Listen('itemAdded')
   treeViewItemAddedHandler(e: CustomEvent): void {
     if (e.detail && e.detail.setRootSettings) {
       e.detail.setRootSettings(
@@ -34,10 +37,35 @@ export class ModusTreeView {
     }
   }
 
+  toggleItemSelection(itemNodeId: number, element: HTMLModusTreeViewItemElement): void {
+    const prevState = new Map(this.selected);
+
+    if (prevState.has(itemNodeId)) {
+      prevState.delete(itemNodeId);
+      element.selected = false;
+    } else {
+      prevState.set(itemNodeId, element);
+      element.selected = true;
+    }
+
+    this.selected = prevState;
+  }
+
   render(): HTMLUListElement {
+    const tunnelState = {
+      multiSelection: this.multiSelection,
+      checkboxSelection: this.checkboxSelection,
+      expandIcon: this.expandIcon,
+      collapseIcon: this.collapseIcon,
+      selected: this.selected,
+      toggleItemSelection: (itemNodeId, element) => this.toggleItemSelection(itemNodeId, element),
+    };
+
     return (
       <ul>
-        <slot />
+        <TreeViewItemTunnel.Provider state={tunnelState}>
+          <slot />
+        </TreeViewItemTunnel.Provider>
       </ul>
     );
   }
